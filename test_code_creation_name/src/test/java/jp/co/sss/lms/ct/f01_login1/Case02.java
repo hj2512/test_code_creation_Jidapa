@@ -38,6 +38,18 @@ public class Case02 {
 	@DisplayName("テスト01 トップページURLでアクセス")
 	void test01() {
 		goTo("http://localhost:8080/lms/");
+
+		//修正箇所
+		assertTrue(webDriver.findElement(
+				By.id("loginId")).isDisplayed());
+		assertTrue(webDriver.findElement(
+				By.id("password")).isDisplayed());
+		assertTrue(webDriver.findElement(
+				By.cssSelector("input[type='submit']"))
+				.isDisplayed());
+		getEvidence(new Object() {
+		}, "02_01_ログイン画面");
+
 	}
 
 	@Test
