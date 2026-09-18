@@ -39,7 +39,7 @@ public class Case02 {
 	void test01() {
 		goTo("http://localhost:8080/lms/");
 
-		//修正箇所
+		//修正箇所 遷移処理+スクリーンショット
 		assertTrue(webDriver.findElement(
 				By.id("loginId")).isDisplayed());
 		assertTrue(webDriver.findElement(
