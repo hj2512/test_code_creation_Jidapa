@@ -1,6 +1,7 @@
 package jp.co.sss.lms.ct.f01_login1;
 
 import static jp.co.sss.lms.ct.util.WebDriverUtils.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.openqa.selenium.By;
 
 /**
  * 結合テスト ログイン機能①
@@ -35,14 +37,50 @@ public class Case03 {
 	@Order(1)
 	@DisplayName("テスト01 トップページURLでアクセス")
 	void test01() {
-		// TODO ここに追加
+		// トップページにアクセスする
+		goTo("http://localhost:8080/lms/");
+
+		// ログイン画面が表示されていることを確認する
+		assertTrue(webDriver.findElement(By.id("loginId")).isDisplayed());
+		assertTrue(webDriver.findElement(By.id("password")).isDisplayed());
+
+		// ログインボタンが表示されていることを確認する
+		assertTrue(webDriver.findElement(
+				By.cssSelector("input[type='submit']")).isDisplayed());
+
+		// エビデンスを保存する
+		getEvidence(new Object() {
+		}, "03_01_ログイン画面");
 	}
 
 	@Test
 	@Order(2)
 	@DisplayName("テスト02 初回ログイン済みの受講生ユーザーでログイン")
 	void test02() {
-		// TODO ここに追加
+		// ログインIDを入力する
+		webDriver.findElement(By.id("loginId"))
+				.sendKeys("StudentAA01");
+
+		// パスワードを入力する
+		webDriver.findElement(By.id("password"))
+				.sendKeys("StudentAA0");
+
+		// ログインボタンを押下する
+		webDriver.findElement(By.cssSelector("input[type='submit']"))
+				.click();
+
+		// 画面遷移を待機する
+		visibilityTimeout(By.tagName("body"), 5);
+
+		// ログインに成功したことを確認する
+		assertFalse(webDriver.getCurrentUrl().endsWith("/lms/"));
+
+		// ログイン画面が表示されていないことを確認する
+		assertTrue(webDriver.findElements(By.id("loginId")).isEmpty());
+
+		// エビデンスを保存する
+		getEvidence(new Object() {
+		}, "03_02_ログイン成功");
 	}
 
 }
