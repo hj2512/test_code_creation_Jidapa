@@ -3,8 +3,6 @@ package jp.co.sss.lms.ct.f02_faq;
 import static jp.co.sss.lms.ct.util.WebDriverUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -94,10 +92,38 @@ public class Case06 {
 		Object[] windowHandles = webDriver.getWindowHandles().toArray();
 		webDriver.switchTo().window((String) windowHandles[1]);
 
-		visibilityTimeout(By.tagName("h2"), 5);
+		visibilityTimeout(By.id("form"), 5);
 
 		assertEquals("よくある質問 | LMS", webDriver.getTitle());
-		assertTrue(webDriver.findElement(By.tagName("h2")).isDisplayed());
+		assertTrue(webDriver.findElement(By.id("form")).isDisplayed());
+		assertTrue(webDriver.findElement(By.linkText("【研修関係】")).isDisplayed());
+		assertTrue(webDriver.findElement(By.linkText("【人材開発支援助成金】")).isDisplayed());
+		assertTrue(webDriver.findElement(By.linkText("【遠隔研修】")).isDisplayed());
+
+		// 初期状態の質問5件が表示されていることを確認
+		WebElement lastQuestion = webDriver.findElement(
+				By.xpath("//*[contains(text(),'キャンセル料・途中退校について')]"));
+
+		assertTrue(webDriver.findElement(
+				By.xpath("//*[contains(text(),'研修の申し込みはどのようにすれば良いですか？')]"))
+				.isDisplayed());
+
+		assertTrue(webDriver.findElement(
+				By.xpath("//*[contains(text(),'助成金書類の作成方法が分かりません')]"))
+				.isDisplayed());
+
+		assertTrue(webDriver.findElement(
+				By.xpath("//*[contains(text(),'事業所が変わった場合、何かしら手続きをする必要がありますか？')]"))
+				.isDisplayed());
+
+		assertTrue(webDriver.findElement(
+				By.xpath("//*[contains(text(),'セルフ・キャリアドック制度とは何か')]"))
+				.isDisplayed());
+
+		assertTrue(lastQuestion.isDisplayed());
+
+		((JavascriptExecutor) webDriver).executeScript(
+				"arguments[0].scrollIntoView({block:'center'});", lastQuestion);
 
 		getEvidence(new Object() {
 		}, "06_04_よくある質問画面");
@@ -107,20 +133,29 @@ public class Case06 {
 	@Order(5)
 	@DisplayName("テスト05 カテゴリ検索結果を表示")
 	void test05() {
-		// カテゴリを選択
-		List<WebElement> categoryLinks = webDriver
-				.findElements(By.cssSelector("fieldset a[href*='frequentlyAskedQuestionCategoryId']"));
+		webDriver.findElement(
+				By.linkText("【研修関係】")).click();
 
-		// カテゴリが表示されていることを確認
-		assertFalse(categoryLinks.isEmpty());
+		// 「研修関係」の検索結果2件が表示されることを確認
+		visibilityTimeout(
+				By.xpath("//*[contains(text(),'キャンセル料・途中退校について')]"),
+				5);
 
-		// 最初のカテゴリをクリック
-		categoryLinks.get(0).click();
+		assertTrue(webDriver.findElement(
+				By.xpath("//*[contains(text(),'研修の申し込みはどのようにすれば良いですか？')]"))
+				.isDisplayed());
 
-		visibilityTimeout(By.cssSelector("table.sortabletable"), 5);
+		WebElement targetQuestion = webDriver.findElement(
+				By.xpath("//*[contains(text(),'キャンセル料・途中退校について')]"));
 
-		// 検索結果が表示されていることを確認
-		assertTrue(webDriver.findElement(By.cssSelector("table.sortabletable")).isDisplayed());
+		assertTrue(targetQuestion.isDisplayed());
+
+		// 検索結果が2件であることを確認
+		assertEquals(2, webDriver.findElements(
+				By.xpath("//*[contains(text(),'Q.')]")).size());
+
+		((JavascriptExecutor) webDriver).executeScript(
+				"arguments[0].scrollIntoView({block:'center'});", targetQuestion);
 
 		getEvidence(new Object() {
 		}, "06_05_カテゴリ検索結果");
@@ -130,25 +165,25 @@ public class Case06 {
 	@Order(6)
 	@DisplayName("テスト06 検索結果の質問をクリックしその回答を表示")
 	void test06() {
-		// 最初の質問を取得
-		WebElement question = webDriver.findElement(By.cssSelector("dl[id^='question-h'] dt"));
+		// 「キャンセル料・途中退校について」をクリックして回答を表示
+		WebElement question = webDriver.findElement(
+				By.xpath("//*[contains(text(),'キャンセル料・途中退校について')]"));
 
-		// 質問が見える位置までスクロール
 		((JavascriptExecutor) webDriver).executeScript(
-				"arguments[0].scrollIntoView({block: 'center'});", question);
+				"arguments[0].scrollIntoView({block:'center'});",
+				question);
 
-		// 質問をクリック
 		((JavascriptExecutor) webDriver).executeScript(
-				"arguments[0].click();", question);
+				"arguments[0].click();",
+				question);
 
-		// 回答を取得
-		WebElement answer = webDriver.findElement(By.cssSelector("dd[id^='answer-h']"));
+		WebElement answer = webDriver.findElement(
+				By.xpath("//*[contains(text(),'受講者の退職や解雇等')]"));
 
-		// 回答が表示されていることを確認
 		assertTrue(answer.isDisplayed());
 
 		getEvidence(new Object() {
 		}, "06_06_回答表示");
-
 	}
+
 }
